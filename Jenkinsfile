@@ -1,32 +1,18 @@
 
 pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine' 
-            args '-v /root/.m2:/root/.m2' 
+   agent any
+
+   stages {
+     stage('Git Checkout'){
+        steps {
+            git branch: 'feature/Build-Pipeline-Codes', credentialsId: '1e5c15e0-5802-4d49-9991-523e20c40702', url: 'https://gitlab.adelaide.edu.au/integration/spring-boot-examples/spring-boot-camel-helloworld.git'
         }
-    }
-    stages {
-        stage('Build') { 
-            steps {
-                sh 'mvn -B -DskipTests clean package' 
-            }
+     }
+     stage('Build') {
+        steps {
+           echo 'Building this project....'
+          
         }
-        stage('Test') {
-            steps{
-               sh 'mvn test'
-            }
-            post {
-               always {
-                  junit 'target/surefire-reports/*.xml'
-               }
-            }
-        }
-        stage('Deliver') {
-          steps {
-             sh './jenkins/scripts/deliver.sh'
-          }
-		
-        }
-    }
+     }
+   }
 }
